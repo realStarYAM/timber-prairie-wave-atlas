@@ -29,16 +29,16 @@ export function PartnerDisplay({
         </p>
       </div>
       <div className="flex w-[5.75rem] shrink-0 flex-col gap-2">
-        <SideBtn label="Sonnette" onClick={onBell} className="text-[#3f6f4e]">
+        <SideBtn label="Sonnette" onClick={onBell} className="text-pos">
           <Bell className="size-9" />
         </SideBtn>
-        <SideBtn label="Parler" onClick={onSpeak} className="text-[#1d4ed8]">
+        <SideBtn label="Parler" onClick={onSpeak} className="text-info">
           <Volume2 className="size-9" strokeWidth={2.25} />
         </SideBtn>
         <SideBtn
           label="Retourner"
           onClick={() => setFlipped((v) => !v)}
-          className="text-[#1d4ed8]"
+          className="text-info"
         >
           <FlipVertical2 className="size-9" />
         </SideBtn>
@@ -67,7 +67,7 @@ function SideBtn({
       aria-label={label}
       onClick={onClick}
       className={cn(
-        "tile-press flex h-20 items-center justify-center rounded-lg bg-chrome shadow-[var(--shadow-tile)]",
+        "th-btn tile-press flex h-20 items-center justify-center rounded-lg bg-chrome shadow-[var(--shadow-tile)]",
         className,
       )}
     >

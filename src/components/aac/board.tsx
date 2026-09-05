@@ -20,6 +20,8 @@ import { PhraseGrid } from "./phrase-grid";
 import { playChime } from "@/lib/aac/chime";
 import { useAacStore } from "@/lib/aac/store";
 import type { Category, Phrase } from "@/lib/aac/types";
+import { applyThemeToDocument } from "@/lib/theme/apply";
+import { ThemeGallery } from "./theme-gallery";
 
 export function Board() {
   const message = useAacStore((s) => s.message);
@@ -63,6 +65,7 @@ export function Board() {
   const [flip, setFlip] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [themesOpen, setThemesOpen] = useState(false);
   const [addMenu, setAddMenu] = useState(false);
   const [newPhrase, setNewPhrase] = useState(false);
   const [newCategory, setNewCategory] = useState(false);
@@ -85,9 +88,16 @@ export function Board() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = settings.dark ? "dark" : "light";
-    document.documentElement.dataset.contrast = settings.highContrast ? "high" : "normal";
-  }, [settings.dark, settings.highContrast]);
+    applyThemeToDocument(settings);
+  }, [settings]);
+
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = () => applyThemeToDocument(useAacStore.getState().settings);
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -96,6 +106,7 @@ export function Board() {
         setShowMessage(false);
         setHistoryOpen(false);
         setSettingsOpen(false);
+        setThemesOpen(false);
         setAddMenu(false);
         setNewPhrase(false);
         setNewCategory(false);
@@ -210,7 +221,7 @@ export function Board() {
           onMove={movePhrase}
         />
         {reorder ? (
-          <p className="pointer-events-none absolute bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-[#1c1c1e]/90 px-3 py-1 text-xs text-white">
+          <p className="pointer-events-none absolute bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-ink/85 px-3 py-1 text-xs text-bg">
             Mode réorganisation — flèches sur les cases
           </p>
         ) : null}
@@ -237,6 +248,7 @@ export function Board() {
           onFullscreen={() => setShowMessage(true)}
           onAdd={() => setAddMenu(true)}
           onSettings={() => setSettingsOpen(true)}
+          onThemes={() => setThemesOpen(true)}
           onBell={playChime}
           onShare={() => void shareMessage()}
           onFlip={() => setFlip((v) => !v)}
@@ -274,6 +286,15 @@ export function Board() {
           onReset={resetBoard}
           onExport={exportBoard}
           onImport={handleImport}
+          onOpenThemes={() => setThemesOpen(true)}
+        />
+      ) : null}
+
+      {themesOpen ? (
+        <ThemeGallery
+          settings={settings}
+          onChange={updateSettings}
+          onClose={() => setThemesOpen(false)}
         />
       ) : null}
 

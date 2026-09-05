@@ -53,6 +53,11 @@ export type Settings = {
   dark: boolean;
   longPressEdit: boolean;
   customKeys: string[];
+  /** Theme system (Paramètres → Apparence → Thème) */
+  themeId?: string;
+  themeMode?: "auto" | "light" | "dark";
+  themeFavorites?: string[];
+  themeRecent?: string[];
 };
 
 export const TILE_COLORS: TileColor[] = [
@@ -78,6 +83,10 @@ export const DEFAULT_SETTINGS: Settings = {
   dark: false,
   longPressEdit: true,
   customKeys: [],
+  themeId: "clairvoix",
+  themeMode: "light",
+  themeFavorites: [],
+  themeRecent: [],
 };
 
 export const DEFAULT_PROFILE: Profile = {

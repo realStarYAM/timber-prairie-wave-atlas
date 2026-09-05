@@ -6,6 +6,7 @@ import {
   History,
   Keyboard,
   Languages,
+  Palette,
   PencilLine,
   Plus,
   RotateCcw,
@@ -27,6 +28,7 @@ export type ActionHandlers = {
   onFullscreen: () => void;
   onAdd: () => void;
   onSettings: () => void;
+  onThemes: () => void;
   onBell: () => void;
   onShare: () => void;
   onFlip: () => void;
@@ -48,48 +50,48 @@ export type ActionHandlers = {
 export function ActionRail(props: ActionHandlers) {
   const actions = [
     props.canUndo
-      ? { key: "undo", label: "Annuler", icon: RotateCcw, className: "text-danger", stroke: 2.5, onClick: props.onClear }
-      : { key: "clear", label: "Effacer", icon: X, className: "text-danger", stroke: 3, onClick: props.onClear },
+      ? { key: "undo", label: "Annuler", icon: RotateCcw, className: "tctx-v-danger", stroke: 2.5, onClick: props.onClear }
+      : { key: "clear", label: "Effacer", icon: X, className: "tctx-v-danger", stroke: 3, onClick: props.onClear },
     props.speaking
-      ? { key: "stop", label: "Arrêter", icon: Square, className: "text-[#1d4ed8] fill-[#1d4ed8]", stroke: 2.25, onClick: props.onSpeak }
-      : { key: "speak", label: "Parler", icon: Volume2, className: "text-ink", stroke: 2.25, onClick: props.onSpeak },
-    { key: "delete", label: "Mot précédent", icon: Delete, className: "text-ink", stroke: 2.25, onClick: props.onDeleteWord },
-    { key: "fullscreen", label: "Afficher le message", icon: Scan, className: "text-ink", stroke: 2.25, onClick: props.onFullscreen },
-    { key: "add", label: "Ajouter", icon: Plus, className: "text-accent", stroke: 3, onClick: props.onAdd },
-    { key: "settings", label: "Réglages", icon: Settings, className: "text-muted", stroke: 2.25, onClick: props.onSettings },
-    { key: "bell", label: "Sonnette", icon: Bell, className: "text-[#3f6f4e]", stroke: 2.25, onClick: props.onBell },
-    { key: "share", label: "Partager", icon: Share, className: "text-[#3f6f4e]", stroke: 2.25, onClick: props.onShare },
+      ? { key: "stop", label: "Arrêter", icon: Square, className: "tctx-v-info tctx-v-info-fill", stroke: 2.25, onClick: props.onSpeak }
+      : { key: "speak", label: "Parler", icon: Volume2, className: "tctx-chrome", stroke: 2.25, onClick: props.onSpeak },
+    { key: "delete", label: "Mot précédent", icon: Delete, className: "tctx-chrome", stroke: 2.25, onClick: props.onDeleteWord },
+    { key: "fullscreen", label: "Afficher le message", icon: Scan, className: "tctx-chrome", stroke: 2.25, onClick: props.onFullscreen },
+    { key: "add", label: "Ajouter", icon: Plus, className: "tctx-v-accent", stroke: 3, onClick: props.onAdd },
+    { key: "themes", label: "Galerie des thèmes", icon: Palette, className: "tctx-v-accent", stroke: 2.25, onClick: props.onThemes },
+    { key: "settings", label: "Réglages", icon: Settings, className: "tctx-chrome", stroke: 2.25, onClick: props.onSettings },
+    { key: "bell", label: "Sonnette", icon: Bell, className: "tctx-v-pos", stroke: 2.25, onClick: props.onBell },
+    { key: "share", label: "Partager", icon: Share, className: "tctx-v-pos", stroke: 2.25, onClick: props.onShare },
     {
       key: "flip",
       label: "Retourner",
       icon: FlipVertical2,
-      className: props.flip ? "text-accent" : "text-[#1d4ed8]",
+      className: props.flip ? "tctx-v-accent" : "tctx-v-info",
       stroke: 2.25,
       onClick: props.onFlip,
     },
-    { key: "keyboard", label: "Clavier", icon: Keyboard, className: "text-[#1d4ed8]", stroke: 2.25, onClick: props.onKeyboard },
-    { key: "users", label: "Utilisateurs", icon: Users, className: "text-[#1d4ed8]", stroke: 2.25, onClick: props.onUsers },
+    { key: "keyboard", label: "Clavier", icon: Keyboard, className: "tctx-v-info", stroke: 2.25, onClick: props.onKeyboard },
+    { key: "users", label: "Utilisateurs", icon: Users, className: "tctx-v-info", stroke: 2.25, onClick: props.onUsers },
     {
       key: "reorder",
       label: "Réorganiser",
       icon: ArrowDownUp,
-      className: props.reorder ? "text-accent" : "text-[#1d4ed8]",
+      className: props.reorder ? "tctx-v-accent" : "tctx-v-info",
       stroke: 2.25,
       onClick: props.onReorder,
     },
-    { key: "search", label: "Rechercher", icon: Search, className: "text-ink", stroke: 2.25, onClick: props.onSearch },
+    { key: "search", label: "Rechercher", icon: Search, className: "tctx-chrome", stroke: 2.25, onClick: props.onSearch },
     {
       key: "edit",
       label: "Modifier",
       icon: PencilLine,
-      className: props.editMode ? "text-accent" : "text-ink",
+      className: props.editMode ? "tctx-v-accent" : "tctx-chrome",
       stroke: 2.25,
       onClick: props.onEditMode,
     },
-    { key: "history", label: "Récents", icon: History, className: "text-ink", stroke: 2.25, onClick: props.onHistory },
-    { key: "translate", label: "Traduire", icon: Languages, className: "text-[#1d4ed8]", stroke: 2.25, onClick: props.onTranslate },
-    { key: "editor", label: "Saisie plein écran", icon: Keyboard, className: "text-ink", stroke: 2.25, onClick: props.onEditor },
-    { key: "settings2", label: "Réglages", icon: Settings, className: "text-muted", stroke: 2.25, onClick: props.onSettings },
+    { key: "history", label: "Récents", icon: History, className: "tctx-chrome", stroke: 2.25, onClick: props.onHistory },
+    { key: "translate", label: "Traduire", icon: Languages, className: "tctx-v-info", stroke: 2.25, onClick: props.onTranslate },
+    { key: "editor", label: "Saisie plein écran", icon: Keyboard, className: "tctx-chrome", stroke: 2.25, onClick: props.onEditor },
   ];
 
   return (
@@ -105,8 +107,9 @@ export function ActionRail(props: ActionHandlers) {
             type="button"
             onClick={action.onClick}
             aria-label={action.label}
+            title={action.label}
             className={cn(
-              "tile-press flex h-14 items-center justify-center rounded-lg bg-chrome shadow-[var(--shadow-tile)] lg:h-16",
+              "th-btn tile-press flex h-14 items-center justify-center rounded-lg bg-chrome shadow-[var(--shadow-tile)] lg:h-16",
               action.className,
             )}
           >

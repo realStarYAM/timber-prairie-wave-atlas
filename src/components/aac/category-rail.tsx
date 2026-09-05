@@ -74,10 +74,10 @@ function CategoryButton({
         onSelect(category.id);
       }}
       className={cn(
-        "tile-press flex min-h-14 items-center justify-center rounded-lg px-2 text-center shadow-[var(--shadow-tile)] max-lg:min-w-28 lg:min-h-16",
+        "th-chip tile-press flex min-h-14 items-center justify-center rounded-lg px-2 text-center shadow-[var(--shadow-tile)] max-lg:min-w-28 lg:min-h-16",
         selected
-          ? "bg-chrome-selected text-ink ring-2 ring-line-strong"
-          : "bg-chrome text-ink",
+          ? "bg-chrome-selected tctx-chrome-sel ring-2 ring-line-strong"
+          : "bg-chrome tctx-chrome",
       )}
     >
       <span className="text-cat font-medium leading-tight text-balance">{category.name}</span>

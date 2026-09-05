@@ -39,6 +39,18 @@ import {
   type TileColor,
 } from "@/lib/aac/types";
 import { cn } from "@/lib/utils";
+import { getTheme } from "@/lib/theme/registry";
+
+const MODE_AUTO = "auto" as const;
+const MODE_LIGHT = "light" as const;
+const MODE_DARK = "dark" as const;
+
+function themeModeOf(s: Settings): "auto" | "light" | "dark" {
+  if (s.themeMode === MODE_AUTO || s.themeMode === MODE_DARK || s.themeMode === MODE_LIGHT) {
+    return s.themeMode;
+  }
+  return s.dark ? MODE_DARK : MODE_LIGHT; // legacy boards
+}
 
 export function SettingsMenu({
   settings,
@@ -47,6 +59,7 @@ export function SettingsMenu({
   onReset,
   onExport,
   onImport,
+  onOpenThemes,
 }: {
   settings: Settings;
   onChange: (patch: Partial<Settings>) => void;
@@ -54,10 +67,16 @@ export function SettingsMenu({
   onReset: () => void;
   onExport: () => void;
   onImport: (file: File) => void;
+  onOpenThemes?: () => void;
 }) {
   const [page, setPage] = useState<
-    null | "general" | "layout" | "board" | "speech" | "backup" | "keyboard"
+    null | "general" | "appearance" | "board" | "speech" | "backup" | "keyboard"
   >(null);
+
+  const mode = themeModeOf(settings);
+  const setMode = (m: "auto" | "light" | "dark") => onChange({ themeMode: m, dark: m === MODE_DARK });
+
+  const activeTheme = getTheme(settings.themeId) ?? getTheme("clairvoix")!;
 
   if (page === "general") {
     return (
@@ -68,9 +87,14 @@ export function SettingsMenu({
           onChange={(v) => onChange({ longPressEdit: v })}
         />
         <IosToggleRow
+          label="Clair / sombre automatique"
+          checked={mode === MODE_AUTO}
+          onChange={(v) => setMode(v ? MODE_AUTO : settings.dark ? MODE_DARK : MODE_LIGHT)}
+        />
+        <IosToggleRow
           label="Thème sombre"
-          checked={settings.dark}
-          onChange={(v) => onChange({ dark: v })}
+          checked={mode === MODE_DARK}
+          onChange={(v) => setMode(v ? MODE_DARK : MODE_LIGHT)}
         />
         <IosToggleRow
           label="Contraste élevé"
@@ -82,10 +106,45 @@ export function SettingsMenu({
     );
   }
 
-  if (page === "layout") {
+  if (page === "appearance") {
     return (
-      <SubPage title="Mise en page et couleurs" onBack={() => setPage(null)}>
-        <p className="px-4 pt-3 pb-1 text-xs tracking-wide text-white/50 uppercase">Taille des boutons</p>
+      <SubPage title="Apparence et thèmes" onBack={() => setPage(null)}>
+        <button
+          type="button"
+          onClick={onOpenThemes}
+          className="th-btn mx-4 mt-4 flex w-[calc(100%-2rem)] items-center gap-3 overflow-hidden rounded-xl border border-accent/40 bg-surface-2 p-3 text-left"
+        >
+          <span className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-surface text-3xl shadow-[var(--shadow-tile)]">
+            {activeTheme.emoji}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[17px] font-bold text-ink">{activeTheme.name}</span>
+            <span className="block truncate text-sm text-muted">
+              {activeTheme.era ? `${activeTheme.era} · ` : ""}Ouvrir la galerie des thèmes
+            </span>
+          </span>
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-fg">
+            <Palette className="size-5" />
+          </span>
+        </button>
+
+        <p className="px-4 pt-4 pb-1 text-xs tracking-wide text-subtle uppercase">Mode clair / sombre</p>
+        <IosToggleRow
+          label="Automatique (suit l’appareil)"
+          checked={mode === MODE_AUTO}
+          onChange={(v) => setMode(v ? MODE_AUTO : settings.dark ? MODE_DARK : MODE_LIGHT)}
+        />
+        <IosToggleRow
+          label="Sombre"
+          checked={mode === MODE_DARK}
+          onChange={(v) => setMode(v ? MODE_DARK : MODE_LIGHT)}
+        />
+        <IosToggleRow
+          label="Contraste élevé"
+          checked={settings.highContrast}
+          onChange={(v) => onChange({ highContrast: v })}
+        />
+        <p className="px-4 pt-4 pb-1 text-xs tracking-wide text-subtle uppercase">Taille des boutons</p>
         <div className="flex gap-2 px-4 py-3">
           {(["compact", "comfortable", "large"] as ButtonSize[]).map((size) => (
             <button
@@ -93,15 +152,15 @@ export function SettingsMenu({
               type="button"
               onClick={() => onChange({ buttonSize: size })}
               className={cn(
-                "flex-1 rounded-lg py-3 text-sm font-medium",
-                settings.buttonSize === size ? "bg-[#0a84ff] text-white" : "bg-white/10",
+                "th-btn flex-1 rounded-lg py-3 text-sm font-bold",
+                settings.buttonSize === size ? "bg-accent text-accent-fg" : "bg-surface-2 text-ink",
               )}
             >
               {size === "compact" ? "Compact" : size === "comfortable" ? "Confort" : "Grand"}
             </button>
           ))}
         </div>
-        <IosToggleRow label="Thème sombre" checked={settings.dark} onChange={(v) => onChange({ dark: v })} last />
+        <IosToggleRow label="Appui long pour modifier" checked={settings.longPressEdit} onChange={(v) => onChange({ longPressEdit: v })} last />
       </SubPage>
     );
   }
@@ -109,7 +168,7 @@ export function SettingsMenu({
   if (page === "board") {
     return (
       <SubPage title="Catégories et phrases" onBack={() => setPage(null)}>
-        <p className="px-4 py-4 text-[15px] leading-relaxed text-white/70">
+        <p className="px-4 py-4 text-[15px] leading-relaxed text-muted">
           Appui long sur une phrase ou une catégorie pour la modifier. Utilisez + pour en ajouter, et la loupe pour
           rechercher.
         </p>
@@ -120,7 +179,7 @@ export function SettingsMenu({
               onReset();
               toast.success("Tableau restauré");
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-white/10 py-3 text-[#ff453a]"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-surface-2 py-3 text-danger"
           >
             <Trash2 className="size-4" />
             Restaurer le tableau d’origine
@@ -137,7 +196,7 @@ export function SettingsMenu({
   if (page === "backup") {
     return (
       <SubPage title="Sauvegarder et importer" onBack={() => setPage(null)}>
-        <p className="px-4 py-4 text-[15px] leading-relaxed text-white/70">
+        <p className="px-4 py-4 text-[15px] leading-relaxed text-muted">
           Exportez votre tableau en fichier JSON, ou importez-en un. Le partage AirDrop n’est pas disponible dans le
           navigateur : envoyez le fichier par Messages ou Mail.
         </p>
@@ -145,12 +204,12 @@ export function SettingsMenu({
           <button
             type="button"
             onClick={onExport}
-            className="flex items-center justify-center gap-2 rounded-lg bg-white/10 py-3 text-[#0a84ff]"
+            className="flex items-center justify-center gap-2 rounded-lg bg-surface-2 py-3 text-accent"
           >
             <Download className="size-4" />
             Exporter le tableau
           </button>
-          <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-white/10 py-3 text-[#0a84ff]">
+          <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-surface-2 py-3 text-accent">
             <Upload className="size-4" />
             Importer un tableau
             <input
@@ -186,14 +245,14 @@ export function SettingsMenu({
         }
       >
         <IosRow
+          icon={<Palette className="size-6" />}
+          label="Apparence et thèmes"
+          onClick={() => setPage("appearance")}
+        />
+        <IosRow
           icon={<SettingsIcon className="size-6" />}
           label="Paramètres généraux"
           onClick={() => setPage("general")}
-        />
-        <IosRow
-          icon={<Palette className="size-6" />}
-          label="Mise en page et Couleurs"
-          onClick={() => setPage("layout")}
         />
         <IosRow
           icon={<Grid3x3 className="size-6" />}
@@ -271,9 +330,9 @@ function SpeechPage({
   return (
     <SubPage title="Parole et son" onBack={onBack}>
       <label className="block px-4 py-3">
-        <span className="mb-2 block text-sm text-white/60">Voix</span>
+        <span className="mb-2 block text-sm text-muted">Voix</span>
         <select
-          className="h-11 w-full rounded-md bg-[#2c2c2e] px-3 text-white"
+          className="th-field h-11 w-full rounded-md border border-line bg-surface-2 px-3 text-ink"
           value={settings.voiceURI}
           onChange={(e) => onChange({ voiceURI: e.target.value })}
         >
@@ -286,7 +345,7 @@ function SpeechPage({
         </select>
       </label>
       <label className="block px-4 py-3">
-        <span className="mb-2 block text-sm text-white/60">Vitesse ({settings.rate.toFixed(2)})</span>
+        <span className="mb-2 block text-sm text-muted">Vitesse ({settings.rate.toFixed(2)})</span>
         <input
           type="range"
           min={0.6}
@@ -298,7 +357,7 @@ function SpeechPage({
         />
       </label>
       <label className="block px-4 py-3">
-        <span className="mb-2 block text-sm text-white/60">Hauteur ({settings.pitch.toFixed(2)})</span>
+        <span className="mb-2 block text-sm text-muted">Hauteur ({settings.pitch.toFixed(2)})</span>
         <input
           type="range"
           min={0.7}
@@ -326,7 +385,7 @@ function KeyboardPage({
   const keys = settings.customKeys ?? [];
   return (
     <SubPage title="Clavier personnalisé" onBack={onBack}>
-      <p className="px-4 py-3 text-[15px] text-white/70">
+      <p className="px-4 py-3 text-[15px] text-muted">
         Raccourcis affichés au-dessus du clavier. Touchez-en un pour l’écrire d’un geste.
       </p>
       <div className="flex flex-wrap gap-2 px-4 pb-3">
@@ -335,7 +394,7 @@ function KeyboardPage({
             key={k}
             type="button"
             onClick={() => onChange({ customKeys: keys.filter((x) => x !== k) })}
-            className="rounded-full bg-white/10 px-3 py-1.5 text-sm"
+            className="rounded-full bg-surface-2 px-3 py-1.5 text-sm"
           >
             {k} ×
           </button>
@@ -351,7 +410,7 @@ function KeyboardPage({
             onChange({ customKeys: [...keys, t] });
             setDraft("");
           }}
-          className="rounded-md bg-[#0a84ff] px-3 text-sm font-medium"
+          className="th-btn rounded-md bg-accent px-3 text-sm font-bold text-accent-fg"
         >
           Ajouter
         </button>
@@ -373,25 +432,25 @@ export function AddPopover({
 }) {
   return (
     <IosScrim onClose={onClose} align="top-right" fit>
-      <div className="ml-auto w-72 overflow-hidden rounded-xl bg-[#2c2c2e] shadow-2xl">
+      <div className="th-panel ml-auto w-72 overflow-hidden rounded-xl border border-line bg-surface shadow-2xl">
         <button
           type="button"
           onClick={onNewPhrase}
-          className="w-full border-b border-white/10 py-3.5 text-center text-[17px] text-[#0a84ff]"
+          className="w-full border-b border-line py-3.5 text-center text-[17px] text-accent"
         >
           Nouvelle phrase
         </button>
         <button
           type="button"
           onClick={onSaveCurrent}
-          className="w-full border-b border-white/10 py-3.5 text-center text-[17px] text-[#0a84ff]"
+          className="w-full border-b border-line py-3.5 text-center text-[17px] text-accent"
         >
           Enregistrer phrase actuelle
         </button>
         <button
           type="button"
           onClick={onNewCategory}
-          className="w-full py-3.5 text-center text-[17px] text-[#0a84ff]"
+          className="w-full py-3.5 text-center text-[17px] text-accent"
         >
           Nouvelle catégorie
         </button>
@@ -491,7 +550,7 @@ export function NewPhraseDialog({
           footer={
             <IosFooter>
               <IosFooterBtn onClick={onClose}>Annuler</IosFooterBtn>
-              <div className="w-px bg-white/15" />
+              <div className="w-px bg-line" />
               <IosFooterBtn primary onClick={submit}>
                 Ajouter
               </IosFooterBtn>
@@ -500,11 +559,11 @@ export function NewPhraseDialog({
         >
           <div className="grid gap-3 p-3 md:grid-cols-[1.3fr_1fr]">
             <div className="flex flex-col gap-3">
-              <div className="flex min-h-24 items-center justify-center rounded-lg bg-[#2c2c2e] px-3 text-center text-lg">
+              <div className="flex min-h-24 items-center justify-center rounded-lg bg-surface-2 px-3 text-center text-lg">
                 {image ? <img src={image} alt="" className="mr-2 size-10 rounded object-cover" /> : null}
                 <span className={color ? TILE_CLASS[color] : ""}>{label || " "}</span>
               </div>
-              <label className="text-sm text-white/70">
+              <label className="text-sm text-muted">
                 Étiquette:
                 <div className="mt-1">
                   <IosInput value={label} onChange={setLabel} autoFocus />
@@ -514,7 +573,7 @@ export function NewPhraseDialog({
                 <IconBtn label="Couleur" onClick={() => setPalette((v) => !v)}>
                   <Palette className="size-7" />
                 </IconBtn>
-                <label className="flex size-14 cursor-pointer items-center justify-center rounded-lg bg-[#2c2c2e] text-[#0a84ff]">
+                <label className="flex size-14 cursor-pointer items-center justify-center rounded-lg bg-surface-2 text-accent">
                   <ImageIcon className="size-7" />
                   <input
                     type="file"
@@ -527,7 +586,7 @@ export function NewPhraseDialog({
                   />
                 </label>
                 <IconBtn label="Enregistrer la prononciation" onClick={() => void toggleRec()}>
-                  <Mic className={cn("size-7", recording && "text-[#ff453a]")} />
+                  <Mic className={cn("size-7", recording && "text-danger")} />
                 </IconBtn>
               </div>
               {palette ? (
@@ -535,7 +594,7 @@ export function NewPhraseDialog({
                   <button
                     type="button"
                     onClick={() => setColor(undefined)}
-                    className="size-9 rounded-md border border-white/20"
+                    className="size-9 rounded-md border border-line"
                     aria-label="Sans couleur"
                   />
                   {TILE_COLORS.map((c) => (
@@ -543,16 +602,16 @@ export function NewPhraseDialog({
                       key={c}
                       type="button"
                       onClick={() => setColor(c)}
-                      className={cn("size-9 rounded-md", TILE_CLASS[c], color === c && "ring-2 ring-white")}
+                      className={cn("size-9 rounded-md", TILE_CLASS[c], color === c && "ring-2 ring-accent-fg")}
                       aria-label={c}
                     />
                   ))}
                 </div>
               ) : null}
             </div>
-            <div className="overflow-hidden rounded-lg bg-[#2c2c2e]">
+            <div className="overflow-hidden rounded-lg bg-surface-2">
               <div className="grid max-h-64 grid-cols-2 overflow-y-auto">
-                <div className="border-r border-white/10">
+                <div className="border-r border-line">
                   {writable.map((c) => (
                     <button
                       key={c.id}
@@ -563,7 +622,7 @@ export function NewPhraseDialog({
                       }}
                       className={cn(
                         "block w-full truncate px-3 py-2 text-left text-sm",
-                        c.id === catId ? "bg-white/15" : "text-white/50",
+                        c.id === catId ? "bg-accent-soft" : "text-subtle",
                       )}
                     >
                       {c.name}
@@ -572,7 +631,7 @@ export function NewPhraseDialog({
                 </div>
                 <div>
                   {phrases.length === 0 ? (
-                    <p className="px-3 py-2 text-sm text-white/40">Pos: 1 (vide)</p>
+                    <p className="px-3 py-2 text-sm text-subtle">Pos: 1 (vide)</p>
                   ) : (
                     phrases.map((p, i) => (
                       <button
@@ -581,7 +640,7 @@ export function NewPhraseDialog({
                         onClick={() => setIndex(i)}
                         className={cn(
                           "block w-full truncate px-3 py-2 text-left text-sm",
-                          index === i ? "bg-white/15" : "text-white/50",
+                          index === i ? "bg-accent-soft" : "text-subtle",
                         )}
                       >
                         Pos: {i + 1} {p.label}
@@ -634,7 +693,7 @@ export function NewCategoryDialog({
           footer={
             <IosFooter>
               <IosFooterBtn onClick={onClose}>Annuler</IosFooterBtn>
-              <div className="w-px bg-white/15" />
+              <div className="w-px bg-line" />
               <IosFooterBtn primary onClick={submit}>
                 Ajouter
               </IosFooterBtn>
@@ -659,13 +718,13 @@ export function NewCategoryDialog({
                       key={c}
                       type="button"
                       onClick={() => setColor(c)}
-                      className={cn("size-9 rounded-md", TILE_CLASS[c], color === c && "ring-2 ring-white")}
+                      className={cn("size-9 rounded-md", TILE_CLASS[c], color === c && "ring-2 ring-accent-fg")}
                     />
                   ))}
                 </div>
               ) : null}
             </div>
-            <div className="max-h-56 overflow-y-auto rounded-lg bg-[#2c2c2e]">
+            <div className="max-h-56 overflow-y-auto rounded-lg bg-surface-2">
               {real.map((c, i) => (
                 <button
                   key={c.id}
@@ -673,7 +732,7 @@ export function NewCategoryDialog({
                   onClick={() => setIndex(i)}
                   className={cn(
                     "block w-full truncate px-3 py-2 text-left text-sm",
-                    index === i ? "bg-white/15" : "text-white/50",
+                    index === i ? "bg-accent-soft" : "text-subtle",
                   )}
                 >
                   Pos: {i + 1} {c.name}
@@ -702,7 +761,7 @@ function IconBtn({
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="flex size-14 items-center justify-center rounded-lg bg-[#2c2c2e] text-[#0a84ff]"
+      className="flex size-14 items-center justify-center rounded-lg bg-surface-2 text-accent"
     >
       {children}
     </button>
@@ -743,8 +802,8 @@ export function SearchPhrases({
         }
       >
         <div className="px-3 py-2">
-          <div className="flex items-center gap-2 rounded-lg bg-[#2c2c2e] px-3">
-            <Search className="size-4 text-white/40" />
+          <div className="flex items-center gap-2 rounded-lg bg-surface-2 px-3">
+            <Search className="size-4 text-subtle" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -756,14 +815,14 @@ export function SearchPhrases({
         </div>
         <ul>
           {rows.map(({ phrase, cat }) => (
-            <li key={phrase.id} className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+            <li key={phrase.id} className="flex items-center gap-2 border-b border-line px-4 py-3">
               <button type="button" className="min-w-0 flex-1 text-left" onClick={() => onPick(phrase)}>
                 <p className="truncate text-[17px]">{phrase.label}</p>
-                <p className="text-sm text-white/50">Catégorie: {cat}</p>
+                <p className="text-sm text-subtle">Catégorie: {cat}</p>
               </button>
               <button
                 type="button"
-                className="size-10 text-[#7c5cff]"
+                className="size-10 text-accent"
                 aria-label="Écouter"
                 onClick={() => onSpeak(phrase.speak ?? phrase.label)}
               >
@@ -771,7 +830,7 @@ export function SearchPhrases({
               </button>
               <button
                 type="button"
-                className="size-10 text-white/70"
+                className="size-10 text-muted"
                 aria-label="Modifier"
                 onClick={() => onEdit(phrase)}
               >
@@ -803,7 +862,7 @@ export function UsersMenu({
 
   return (
     <IosScrim onClose={onClose} align="top-right" fit>
-      <div className="ml-auto w-72 overflow-hidden rounded-xl bg-[#2c2c2e] shadow-2xl">
+      <div className="th-panel ml-auto w-72 overflow-hidden rounded-xl border border-line bg-surface shadow-2xl">
         {profiles.map((p) => (
           <button
             key={p.id}
@@ -812,7 +871,7 @@ export function UsersMenu({
               onSelect(p.id);
               onClose();
             }}
-            className="flex w-full items-center justify-between border-b border-white/10 px-4 py-3.5 text-[17px] text-[#0a84ff]"
+            className="flex w-full items-center justify-between border-b border-line px-4 py-3.5 text-[17px] text-accent"
           >
             <span>{p.name}</span>
             {p.id === activeId ? <span>✓</span> : null}
@@ -823,7 +882,7 @@ export function UsersMenu({
             <IosInput value={name} onChange={setName} placeholder="Nom" autoFocus />
             <button
               type="button"
-              className="text-sm text-[#0a84ff]"
+              className="text-sm text-accent"
               onClick={() => {
                 if (!name.trim()) return;
                 onAdd(name.trim());
@@ -837,7 +896,7 @@ export function UsersMenu({
           <button
             type="button"
             onClick={() => setCreating(true)}
-            className="w-full py-3.5 text-center text-[17px] text-[#0a84ff]"
+            className="w-full py-3.5 text-center text-[17px] text-accent"
           >
             Nouvel utilisateur
           </button>
@@ -860,7 +919,7 @@ export function FullscreenHelp({ onOk }: { onOk: () => void }) {
           </IosFooter>
         }
       >
-        <ul className="space-y-4 px-5 py-4 text-[15px] leading-relaxed text-white/90">
+        <ul className="space-y-4 px-5 py-4 text-[15px] leading-relaxed text-muted">
           <li>
             • La saisie plein écran vous offre plus d’espace pour saisir, relire et modifier votre message. Elle est
             particulièrement utile pour les messages plus longs ou lorsque vous souhaitez vous concentrer sur la saisie.
@@ -911,25 +970,25 @@ export function FullscreenEditor({
         <FsBtn label="Effacer" onClick={onClear} className="text-danger">
           <span className="text-3xl font-light">×</span>
         </FsBtn>
-        <FsBtn label="Parler" onClick={onSpeak} className="text-[#1d4ed8]">
+        <FsBtn label="Parler" onClick={onSpeak} className="text-info">
           <Volume2 className="size-8" />
         </FsBtn>
-        <FsBtn label="Mot précédent" onClick={onDeleteWord} className="text-[#1d4ed8]">
+        <FsBtn label="Mot précédent" onClick={onDeleteWord} className="text-info">
           <span className="text-xl">⌫</span>
         </FsBtn>
-        <FsBtn label="Enregistrer" onClick={onSave} className="text-[#1d4ed8]">
+        <FsBtn label="Enregistrer" onClick={onSave} className="text-info">
           <Save className="size-7" />
         </FsBtn>
-        <FsBtn label="Partager" onClick={onShare} className="text-[#3f6f4e]">
+        <FsBtn label="Partager" onClick={onShare} className="text-pos">
           <Upload className="size-7" />
         </FsBtn>
-        <FsBtn label="Retour" onClick={onClose} className="text-[#3f6f4e]">
+        <FsBtn label="Retour" onClick={onClose} className="text-pos">
           <span className="text-3xl">←</span>
         </FsBtn>
         <FsBtn label="Réglages" onClick={onSettings} className="text-muted">
           <SettingsIcon className="size-8" />
         </FsBtn>
-        <FsBtn label="Sonnette" onClick={onBell} className="text-[#3f6f4e]">
+        <FsBtn label="Sonnette" onClick={onBell} className="text-pos">
           <span className="text-2xl">🔔</span>
         </FsBtn>
       </div>
@@ -965,7 +1024,7 @@ function FsBtn({
 
 export function ReorderHint() {
   return (
-    <p className="pointer-events-none absolute bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-[#1c1c1e]/90 px-3 py-1 text-xs text-white">
+    <p className="pointer-events-none absolute bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-ink/85 px-3 py-1 text-xs text-bg">
       Mode réorganisation — flèches sur les cases
     </p>
   );

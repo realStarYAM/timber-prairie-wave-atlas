@@ -36,10 +36,10 @@ export function OverlayFrame({
   wide?: boolean;
 }) {
   return (
-    <div className="absolute inset-0 z-40 flex items-end justify-center bg-ink/35 p-3 sm:items-center">
+    <div className="absolute inset-0 z-40 flex items-end justify-center bg-[var(--scrim)] p-3 sm:items-center">
       <div
         className={cn(
-          "flex max-h-[min(92dvh,52rem)] w-full flex-col rounded-xl border border-line bg-surface shadow-[var(--shadow-bar)]",
+          "th-panel flex max-h-[min(92dvh,52rem)] w-full flex-col rounded-xl border border-line bg-surface shadow-[var(--shadow-bar)]",
           wide ? "max-w-3xl" : "max-w-lg",
         )}
         role="dialog"
