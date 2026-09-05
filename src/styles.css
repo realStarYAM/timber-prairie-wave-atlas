@@ -3,6 +3,7 @@
 @theme {
   --font-sans: "SF Pro Text", "Segoe UI", system-ui, -apple-system, sans-serif;
 
+  /* base palette (overridden at runtime by the theme engine) */
   --color-bg: #c5ced8;
   --color-chrome: #b4bdc8;
   --color-chrome-2: #a7b1bd;
@@ -20,6 +21,12 @@
   --color-accent-hover: #0070e0;
   --color-accent-fg: #ffffff;
   --color-accent-soft: #d6e9ff;
+  --color-accent-soft-fg: #0b3a75;
+
+  --color-info: #1d4ed8;
+  --color-info-soft: #dbe4ff;
+  --color-pos: #3f6f4e;
+  --color-pos-soft: #dcefe2;
 
   --color-danger: #e11d2e;
   --color-danger-soft: #ffd5d8;
@@ -107,51 +114,274 @@
   }
 }
 
-html[data-theme="dark"] {
-  --color-bg: #1c1c1e;
-  --color-chrome: #3a3a3c;
-  --color-chrome-2: #2c2c2e;
-  --color-chrome-selected: #48484a;
-  --color-surface: #2c2c2e;
-  --color-surface-2: #3a3a3c;
-  --color-pred: #3a3a3c;
-  --color-ink: #f5f5f7;
-  --color-muted: #d1d1d6;
-  --color-subtle: #8e8e93;
-  --color-line: #48484a;
-  --color-line-strong: #636366;
-  --color-accent: #0a84ff;
-  --color-accent-fg: #ffffff;
-  --color-accent-soft: #0b3a75;
-  --color-danger: #ff453a;
-  --color-danger-soft: #5c1418;
-  --color-danger-fg: #ffd5d3;
-  --color-tile-paper: #2c2c2e;
-  --color-tile-paper-fg: #f5f5f7;
-  --color-tile-mist: #3a3a3c;
-  --color-tile-mist-fg: #f5f5f7;
-  --color-background: #1c1c1e;
-  --color-foreground: #f5f5f7;
-  --color-card: #2c2c2e;
-  --color-card-foreground: #f5f5f7;
-  --color-border: #48484a;
-  --color-secondary: #3a3a3c;
-  --color-secondary-foreground: #f5f5f7;
-  --shadow-tile: 0 0 0 1px rgb(255 255 255 / 0.06);
-  --shadow-bar: 0 0 0 1px rgb(255 255 255 / 0.06);
+/* ------------------------------------------------------------------ */
+/*  Theme decor engine                                                 */
+/*  Each decor restyles the semantic surface hooks (.th-*) — applied   */
+/*  instantly when a theme is chosen. Themes only ever change CSS      */
+/*  variables; the decors below translate them into shapes/light.      */
+/* ------------------------------------------------------------------ */
+
+html[data-theme="dark"],
+html[data-side="dark"] {
+  color-scheme: dark;
 }
 
-html[data-contrast="high"] {
-  --color-bg: #ffffff;
-  --color-chrome: #d0d0d0;
-  --color-chrome-selected: #b0b0b0;
-  --color-surface: #ffffff;
-  --color-pred: #ffffff;
-  --color-ink: #000000;
-  --color-line: #000000;
-  --color-accent: #0050c8;
-  --shadow-tile: 0 0 0 2px #000000;
+.th-tile,
+.th-btn,
+.th-chip,
+.th-key,
+.th-field,
+.th-panel {
+  transition:
+    box-shadow 0.16s ease,
+    background-color 0.16s ease,
+    color 0.16s ease,
+    border-color 0.16s ease,
+    filter 0.16s ease;
 }
+
+.th-tile:focus-visible,
+.th-btn:focus-visible,
+.th-chip:focus-visible,
+.th-key:focus-visible,
+.th-field:focus-visible,
+.th-panel:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Chrome-context text/icons: guaranteed-readable variants of the theme tokens,
+   computed by the engine (--chrome-fg / --v-*) — original theme colors are kept
+   whenever they already pass on the chrome surface. */
+.tctx-chrome {
+  color: var(--chrome-fg);
+}
+
+.tctx-chrome-sel {
+  color: var(--chrome-sel-fg);
+}
+
+.tctx-v-accent {
+  color: var(--v-accent);
+}
+
+.tctx-v-info {
+  color: var(--v-info);
+}
+
+.tctx-v-pos {
+  color: var(--v-pos);
+}
+
+.tctx-v-danger {
+  color: var(--v-danger);
+}
+
+.tctx-v-info-fill {
+  fill: var(--v-info);
+}
+
+/* soft / modern: default look, nothing else needed */
+
+/* bevel — Windows 3.x/9x classic raised controls */
+html[data-decor="bevel"] .th-btn,
+html[data-decor="bevel"] .th-chip,
+html[data-decor="bevel"] .th-key,
+html[data-decor="bevel"] .th-tile {
+  border: 1px solid var(--lo);
+  box-shadow:
+    inset 1px 1px 0 0 var(--hi),
+    inset -1px -1px 0 0 var(--lo);
+}
+html[data-decor="bevel"] .th-btn:active,
+html[data-decor="bevel"] .th-chip:active,
+html[data-decor="bevel"] .th-key:active,
+html[data-decor="bevel"] .th-tile:active {
+  box-shadow:
+    inset 1px 1px 0 0 var(--lo),
+    inset -1px -1px 0 0 var(--hi);
+}
+html[data-decor="bevel"] .th-panel {
+  border: 1px solid var(--lo);
+  box-shadow:
+    inset 2px 2px 0 0 var(--hi),
+    inset -2px -2px 0 0 var(--lo),
+    0 2px 8px rgb(0 0 0 / 0.25);
+}
+html[data-decor="bevel"] .th-field {
+  border: 1px solid var(--lo);
+  box-shadow: inset 2px 2px 3px rgb(0 0 0 / 0.25);
+}
+
+/* aqua — glossy OS X / XP style surfaces */
+html[data-decor="aqua"] .th-btn,
+html[data-decor="aqua"] .th-chip,
+html[data-decor="aqua"] .th-key,
+html[data-decor="aqua"] .th-tile {
+  background-image:
+    linear-gradient(180deg, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0.14) 46%, rgb(255 255 255 / 0) 55%),
+    linear-gradient(180deg, rgb(0 0 0 / 0.04), rgb(0 0 0 / 0));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.8),
+    inset 0 -1px 1px rgb(0 0 0 / 0.12),
+    0 1px 2px rgb(0 0 0 / 0.25);
+}
+html[data-decor="aqua"] .th-panel {
+  border: 1px solid rgb(255 255 255 / 0.6);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.7),
+    0 10px 30px rgb(0 0 0 / 0.3);
+}
+html[data-decor="aqua"] .th-field {
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.22), inset 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+
+/* glass — translucency + backdrop blur (Vista, macOS, modern OSes…) */
+html[data-decor="glass"] .th-panel,
+html[data-decor="glass"] .th-field {
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+}
+html[data-decor="glass"] .th-panel {
+  border: 1px solid rgb(255 255 255 / 0.28);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.4),
+    0 12px 36px rgb(0 0 0 / 0.35);
+}
+html[data-decor="glass"] .th-field {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35);
+}
+html[data-decor="glass"] .th-btn,
+html[data-decor="glass"] .th-chip,
+html[data-decor="glass"] .th-key,
+html[data-decor="glass"] .th-tile {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 2px 8px rgb(0 0 0 / 0.2);
+}
+
+/* neon — glowing edges for synthwave / cyber / scouter themes */
+html[data-decor="neon"] .th-btn,
+html[data-decor="neon"] .th-chip,
+html[data-decor="neon"] .th-key,
+html[data-decor="neon"] .th-tile {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--glow) 60%, transparent),
+    0 0 10px color-mix(in srgb, var(--glow) 45%, transparent),
+    inset 0 0 12px rgb(255 255 255 / 0.05);
+}
+html[data-decor="neon"] .th-tile:active,
+html[data-decor="neon"] .th-btn:active,
+html[data-decor="neon"] .th-chip:active,
+html[data-decor="neon"] .th-key:active {
+  box-shadow:
+    0 0 0 1px var(--glow),
+    0 0 18px color-mix(in srgb, var(--glow) 80%, transparent);
+}
+html[data-decor="neon"] .th-panel {
+  border: 1px solid color-mix(in srgb, var(--glow) 45%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--glow) 18%, transparent),
+    0 0 26px color-mix(in srgb, var(--glow) 18%, transparent);
+}
+html[data-decor="neon"] .th-field {
+  box-shadow: inset 0 0 10px color-mix(in srgb, var(--glow) 22%, transparent);
+}
+
+/* neu — soft neumorphic dual-light */
+html[data-decor="neu"] .th-btn,
+html[data-decor="neu"] .th-chip,
+html[data-decor="neu"] .th-key,
+html[data-decor="neu"] .th-tile {
+  box-shadow:
+    7px 7px 14px var(--lo),
+    -7px -7px 14px var(--hi);
+}
+html[data-decor="neu"] .th-tile:active,
+html[data-decor="neu"] .th-btn:active,
+html[data-decor="neu"] .th-chip:active,
+html[data-decor="neu"] .th-key:active {
+  box-shadow:
+    inset 6px 6px 12px var(--lo),
+    inset -6px -6px 12px var(--hi);
+}
+html[data-decor="neu"] .th-panel {
+  border-radius: 24px !important;
+  box-shadow:
+    10px 10px 24px var(--lo),
+    -10px -10px 24px var(--hi);
+}
+html[data-decor="neu"] .th-field {
+  box-shadow:
+    inset 6px 6px 12px var(--lo),
+    inset -6px -6px 12px var(--hi);
+}
+
+/* retro — chunky handheld / console outlines */
+html[data-decor="retro"] .th-btn,
+html[data-decor="retro"] .th-chip,
+html[data-decor="retro"] .th-key,
+html[data-decor="retro"] .th-tile {
+  border: 2px solid var(--lo);
+  box-shadow: 0 3px 0 0 var(--lo);
+}
+html[data-decor="retro"] .th-tile:active,
+html[data-decor="retro"] .th-btn:active,
+html[data-decor="retro"] .th-chip:active,
+html[data-decor="retro"] .th-key:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 0 var(--lo);
+}
+html[data-decor="retro"] .th-panel {
+  border: 3px solid var(--lo);
+  box-shadow: 6px 6px 0 0 var(--lo);
+}
+html[data-decor="retro"] .th-field {
+  border: 2px solid var(--lo);
+}
+
+/* cyber — angular cut corners + glow */
+html[data-decor="cyber"] .th-btn,
+html[data-decor="cyber"] .th-chip,
+html[data-decor="cyber"] .th-key,
+html[data-decor="cyber"] .th-tile {
+  border-radius: 2px;
+  clip-path: polygon(0 9px, 9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--glow) 55%, transparent));
+}
+html[data-decor="cyber"] .th-panel {
+  border-radius: 2px;
+  clip-path: polygon(0 14px, 14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--glow) 35%, transparent));
+  border: 1px solid color-mix(in srgb, var(--glow) 45%, transparent);
+}
+html[data-decor="cyber"] .th-field {
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--glow) 25%, transparent);
+  border: 1px solid color-mix(in srgb, var(--glow) 40%, transparent);
+}
+
+/* high-contrast mode: hard outlines everywhere */
+html[data-contrast="high"] .th-tile,
+html[data-contrast="high"] .th-btn,
+html[data-contrast="high"] .th-chip,
+html[data-contrast="high"] .th-key,
+html[data-contrast="high"] .th-field,
+html[data-contrast="high"] .th-panel {
+  border: 2px solid var(--color-ink) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* background art lives on .aac-board; decorative theme css is injected
+   by the engine into <style id="clairvoix-theme-css"> */
+.aac-board {
+  isolation: isolate;
+}
+
+/* ------------------------------------------------------------------ */
+/*  App layout                                                         */
+/* ------------------------------------------------------------------ */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -180,6 +410,53 @@ html[data-contrast="high"] {
 @keyframes blink {
   50% {
     opacity: 0;
+  }
+}
+
+/* decorative animations used by themes (matrix rain, hue shift, rgb) */
+@keyframes thxmatrix {
+  0% {
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      0 240px,
+      0 0,
+      0 0,
+      0 0;
+  }
+}
+
+@keyframes thxhue {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes thxrgb {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes thxpop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -215,6 +492,11 @@ html[data-contrast="high"] {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+}
+
+/* theme gallery entrance */
+.theme-card {
+  animation: thxpop 0.28s ease both;
 }
 
 @media (max-width: 860px) {

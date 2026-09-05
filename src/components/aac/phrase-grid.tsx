@@ -55,7 +55,7 @@ export function PhraseGrid({
         ) : (
           <div
             key={`empty-${i}`}
-            className="hidden rounded-lg bg-surface shadow-[var(--shadow-tile)] lg:block"
+            className="th-empty hidden rounded-lg bg-surface shadow-[var(--shadow-tile)] lg:block"
             aria-hidden
           />
         ),
@@ -112,7 +112,7 @@ function PhraseTile({
           else if (!reorder) onSelect(phrase);
         }}
         className={cn(
-          "tile-press flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg px-2.5 py-2 text-center shadow-[var(--shadow-tile)]",
+          "th-tile tile-press flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg px-2.5 py-2 text-center shadow-[var(--shadow-tile)]",
           phrase.color ? tileClass(phrase.color) : "bg-surface text-ink",
         )}
       >

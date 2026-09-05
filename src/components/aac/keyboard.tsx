@@ -58,14 +58,14 @@ export function KeyboardOverlay({
   }
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-30 rounded-t-xl border-t border-line bg-surface p-2 shadow-[var(--shadow-bar)] lg:p-3">
+    <div className="th-panel absolute inset-x-0 bottom-0 z-30 rounded-t-xl border-t border-line bg-surface p-2 shadow-[var(--shadow-bar)] lg:p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
         <p className="text-sm font-medium text-muted">Clavier</p>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={onSpeak}
-            className="inline-flex h-11 items-center gap-2 rounded-md bg-accent px-3 text-sm font-semibold text-accent-fg"
+            className="th-btn inline-flex h-11 items-center gap-2 rounded-md bg-accent px-3 text-sm font-bold text-accent-fg"
           >
             <Volume2 className="size-4" />
             Parler
@@ -73,7 +73,7 @@ export function KeyboardOverlay({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-11 items-center justify-center rounded-md bg-secondary text-ink"
+            className="th-btn inline-flex size-11 items-center justify-center rounded-md bg-secondary text-ink"
             aria-label="Fermer le clavier"
           >
             <X className="size-5" />
@@ -88,7 +88,7 @@ export function KeyboardOverlay({
               key={k}
               type="button"
               onClick={() => onChange(message ? `${message.trimEnd()} ${k}` : k)}
-              className="shrink-0 rounded-md bg-secondary px-3 py-2 text-sm font-medium"
+              className="th-chip shrink-0 rounded-md bg-secondary px-3 py-2 text-sm font-medium"
             >
               {k}
             </button>
@@ -103,7 +103,7 @@ export function KeyboardOverlay({
               key={p.id}
               type="button"
               onClick={() => onPickPhrase(p)}
-              className="shrink-0 rounded-md bg-accent-soft px-3 py-2 text-sm font-medium text-tile-teal-fg"
+              className="shrink-0 rounded-md th-chip bg-accent-soft px-3 py-2 text-sm font-semibold text-accent-soft-fg"
             >
               {p.label}
             </button>
@@ -165,7 +165,7 @@ function Key({
       type="button"
       onClick={onClick}
       className={cn(
-        "tile-press flex flex-1 items-center justify-center rounded-sm bg-surface-2 font-semibold text-ink shadow-[var(--shadow-tile)]",
+        "th-key tile-press flex flex-1 items-center justify-center rounded-sm bg-surface-2 font-semibold text-ink shadow-[var(--shadow-tile)]",
         slim ? "h-9 text-sm" : "h-12 text-lg lg:h-14",
         wide && "max-w-20 flex-none basis-16",
         extra && "h-12 lg:h-14",

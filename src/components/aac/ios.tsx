@@ -15,7 +15,7 @@ export function IosScrim({
   return (
     <div
       className={cn(
-        "absolute inset-0 z-50 flex bg-black/45 p-4",
+        "absolute inset-0 z-50 flex bg-[var(--scrim)] p-4",
         align === "center" && "items-center justify-center",
         align === "top" && "items-start justify-center pt-[8vh]",
         align === "top-right" && "items-start justify-end pt-16 pr-20",
@@ -48,7 +48,7 @@ export function IosSheet({
   return (
     <div
       className={cn(
-        "mx-auto flex max-h-[min(90dvh,44rem)] w-full flex-col overflow-hidden rounded-xl bg-[#1c1c1e] text-white shadow-2xl",
+        "th-panel mx-auto flex max-h-[min(90dvh,44rem)] w-full flex-col overflow-hidden rounded-xl border border-line bg-surface text-ink shadow-[var(--shadow-bar)]",
         wide ? "max-w-3xl" : "max-w-md",
         className,
       )}
@@ -57,7 +57,7 @@ export function IosSheet({
       aria-labelledby={title ? "ios-title" : undefined}
     >
       {title ? (
-        <h2 id="ios-title" className="shrink-0 px-4 py-3.5 text-center text-lg font-semibold">
+        <h2 id="ios-title" className="shrink-0 border-b border-line px-4 py-3.5 text-center text-lg font-bold">
           {title}
         </h2>
       ) : null}
@@ -83,11 +83,11 @@ export function IosRow({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-3 px-4 py-3.5 text-left text-[17px] text-white",
-        !last && "border-b border-white/10",
+        "th-btn flex w-full items-center gap-3 px-4 py-3.5 text-left text-[17px] text-ink hover:bg-surface-2",
+        !last && "border-b border-line",
       )}
     >
-      {icon ? <span className="flex size-8 items-center justify-center text-[#0a84ff]">{icon}</span> : null}
+      {icon ? <span className="flex size-8 items-center justify-center text-accent">{icon}</span> : null}
       <span className="flex-1">{label}</span>
     </button>
   );
@@ -105,7 +105,7 @@ export function IosToggleRow({
   last?: boolean;
 }) {
   return (
-    <div className={cn("flex items-center justify-between gap-3 px-4 py-3", !last && "border-b border-white/10")}>
+    <div className={cn("flex items-center justify-between gap-3 px-4 py-3", !last && "border-b border-line")}>
       <span className="text-[17px]">{label}</span>
       <IosSwitch checked={checked} onChange={onChange} />
     </div>
@@ -121,7 +121,7 @@ export function IosSwitch({ checked, onChange }: { checked: boolean; onChange: (
       onClick={() => onChange(!checked)}
       className={cn(
         "relative h-[31px] w-[51px] shrink-0 rounded-full transition-colors",
-        checked ? "bg-[#34c759]" : "bg-[#39393d]",
+        checked ? "bg-pos" : "bg-line-strong",
       )}
     >
       <span
@@ -139,7 +139,7 @@ export function IosFooter({
 }: {
   children: ReactNode;
 }) {
-  return <div className="flex shrink-0 border-t border-white/15">{children}</div>;
+  return <div className="flex shrink-0 border-t border-line">{children}</div>;
 }
 
 export function IosFooterBtn({
@@ -159,8 +159,8 @@ export function IosFooterBtn({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "flex-1 py-3.5 text-center text-[17px] font-medium",
-        primary ? "text-[#0a84ff]" : "text-white",
+        "th-btn flex-1 py-3.5 text-center text-[17px] font-semibold",
+        primary ? "text-accent" : "text-ink",
         "disabled:opacity-40",
       )}
     >
@@ -178,12 +178,12 @@ export function IosAlert({
 }) {
   return (
     <IosScrim>
-      <div className="mx-auto w-full max-w-xs overflow-hidden rounded-xl bg-[#2c2c2e] text-center shadow-2xl">
-        <p className="px-5 py-5 text-[17px] font-semibold text-white">{title}</p>
+      <div className="th-panel mx-auto w-full max-w-xs overflow-hidden rounded-xl border border-line bg-surface text-center shadow-[var(--shadow-bar)]">
+        <p className="px-5 py-5 text-[17px] font-semibold text-ink">{title}</p>
         <button
           type="button"
           onClick={onOk}
-          className="w-full border-t border-white/15 py-3 text-[17px] font-medium text-[#0a84ff]"
+          className="th-btn w-full border-t border-line py-3 text-[17px] font-bold text-accent"
         >
           Ok
         </button>
@@ -209,7 +209,7 @@ export function IosInput({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       autoFocus={autoFocus}
-      className="h-11 w-full rounded-md border-0 bg-[#2c2c2e] px-3 text-[17px] text-white outline-none placeholder:text-white/30"
+      className="th-field h-11 w-full rounded-md border border-line bg-surface-2 px-3 text-[17px] text-ink outline-none placeholder:text-subtle"
     />
   );
 }

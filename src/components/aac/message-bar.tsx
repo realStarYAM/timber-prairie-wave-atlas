@@ -22,7 +22,7 @@ export function MessageBar({ message, slots, flip, onChange, onRecallSlot }: Pro
             disabled={!text}
             onClick={() => text && onRecallSlot(i)}
             className={cn(
-              "flex min-h-11 items-center justify-center rounded-lg px-2 text-center text-sm font-medium lg:min-h-12",
+              "th-chip flex min-h-11 items-center justify-center rounded-lg px-2 text-center text-sm font-medium lg:min-h-12",
               text ? "bg-surface text-ink shadow-[var(--shadow-tile)]" : "bg-pred text-subtle",
             )}
           >
@@ -32,7 +32,7 @@ export function MessageBar({ message, slots, flip, onChange, onRecallSlot }: Pro
       </div>
       <section aria-label="Message">
         {flip ? (
-          <div className="flex min-h-28 w-full items-end justify-end rounded-lg bg-surface px-4 py-3 shadow-[var(--shadow-tile)] lg:min-h-36">
+          <div className="th-field flex min-h-28 w-full items-end justify-end rounded-lg bg-surface px-4 py-3 shadow-[var(--shadow-tile)] lg:min-h-36">
             <p className="text-message leading-snug text-ink rotate-180">{message}</p>
           </div>
         ) : (
@@ -45,7 +45,7 @@ export function MessageBar({ message, slots, flip, onChange, onRecallSlot }: Pro
             autoComplete="off"
             autoCorrect="on"
             spellCheck
-            className="min-h-28 w-full resize-none rounded-lg bg-surface px-4 py-3 text-message leading-snug text-ink shadow-[var(--shadow-tile)] outline-none lg:min-h-36"
+            className="th-field min-h-28 w-full resize-none rounded-lg bg-surface px-4 py-3 text-message leading-snug text-ink shadow-[var(--shadow-tile)] outline-none lg:min-h-36"
             aria-label="Zone de texte. Appuyer pour ouvrir le clavier."
             suppressHydrationWarning
           />
