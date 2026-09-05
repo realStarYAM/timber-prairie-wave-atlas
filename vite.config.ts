@@ -173,7 +173,9 @@ export default defineConfig(({ command, isPreview }) => ({
     ...(command === "build" || isPreview
       ? [
           nitro({
-            preset: "vercel",
+            // Netlify builds set NETLIFY=true; everywhere else (the Grok
+            // platform's own deploy) targets Vercel.
+            preset: process.env.NETLIFY ? "netlify" : "vercel",
             // Auto-registers server/middleware/* (the PWA install page +
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
