@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "ClairVoix",
+      "hasCanvas": false,
+      "bodyTextLen": 530,
+      "bodyTextHash": "30fb84d8671f7ff392c2fbe9648076e7ddda13621ffbb427c10618664f933e7e",
+      "bodyTextPrefix": "Bonjour Bonsoir Bonne journée. Bonne nuit. Comment ça va? Ça va ",
+      "horizontalOverflow": false,
+      "consoleErrors": [
+        "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <MatchView router={{...}} match={{id:\"//\",ssr:true, ...}}>\n      <SafeFragment>\n        <SafeFragment fallback={null}>\n          <CatchBoundary getResetKey={function getResetKey} errorComponent={function AppErrorComponent} ...>\n            <SafeFragment fallback={function fallback}>\n              <MatchInnerImpl match={{id:\"//\",ssr:true, ...}}>\n                <Lazy>\n                  <Home>\n                    <Board>\n                      <div className=\"aac-board ...\">\n                        <div className=\"aac-preds\">\n                          <MessageBar message=\"\" slots={[...]} flip={false} onChange={function setMessage} ...>\n                            <div className=\"flex flex-...\">\n                              <div>\n                              <section aria-label=\"Message\">\n                                <textarea\n                                  ref={{current:null}}\n                                  value=\"\"\n                                  onChange={function onChange}\n                                  rows={3}\n                                  enterKeyHint=\"done\"\n                                  autoComplete=\"off\"\n                                  autoCorrect=\"on\"\n                                  spellCheck={true}\n                                  className=\"min-h-28 w-full resize-none rounded-lg bg-surface px-4 py-3 text-message ...\"\n                                  aria-label=\"Zone de texte. Appuyer pour ouvrir le clavier.\"\n-                                 style={{caret-color:\"transparent\"}}\n                                >\n                        ...\n"
+      ],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "ClairVoix",
+      "hasCanvas": false,
+      "bodyTextLen": 530,
+      "bodyTextHash": "30fb84d8671f7ff392c2fbe9648076e7ddda13621ffbb427c10618664f933e7e",
+      "bodyTextPrefix": "Bonjour Bonsoir Bonne journée. Bonne nuit. Comment ça va? Ça va ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

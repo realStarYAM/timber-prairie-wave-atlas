@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "ClairVoix",
+      "hasCanvas": false,
+      "bodyTextLen": 530,
+      "bodyTextHash": "30fb84d8671f7ff392c2fbe9648076e7ddda13621ffbb427c10618664f933e7e",
+      "bodyTextPrefix": "Bonjour Bonsoir Bonne journée. Bonne nuit. Comment ça va? Ça va ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "ClairVoix",
+      "hasCanvas": false,
+      "bodyTextLen": 530,
+      "bodyTextHash": "30fb84d8671f7ff392c2fbe9648076e7ddda13621ffbb427c10618664f933e7e",
+      "bodyTextPrefix": "Bonjour Bonsoir Bonne journée. Bonne nuit. Comment ça va? Ça va ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json"
+}
